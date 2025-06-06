@@ -1,0 +1,21 @@
+Django==4.2.7
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+python-decouple==3.8
+celery==5.3.4
+redis==5.0.1
+djangorestframework-simplejwt==5.3.0
+
+# Fix for pkg_resources issues
+setuptools>=65.0.0
+importlib-metadata>=4.0.0
+
+# Testing dependencies (optional)
+pytest==7.4.3
+pytest-django==4.7.0
+pytest-cov==4.1.0
+coverage==7.3.2
+
+# Development dependencies (optional)
+factory-boy==3.3.0
+faker==20.1.0
