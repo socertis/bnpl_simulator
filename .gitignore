@@ -1,0 +1,45 @@
+# Python and Django files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# Django files
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+# IDE and editor files
+.vscode/
+.pycharm/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS and system files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Virtual environment files
+venv/
+env/
+virtualenv/
+
+# Logs and temp files
+*.log
+*.tmp
+*.pid
+*.sock
+
+# Miscellaneous
+*.bak
+*.swp
+*.swo
+*.orig
