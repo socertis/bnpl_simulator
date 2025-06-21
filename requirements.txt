@@ -19,3 +19,4 @@ coverage==7.3.2
 # Development dependencies (optional)
 factory-boy==3.3.0
 faker==20.1.0
+numpy-financial>=1.0.0

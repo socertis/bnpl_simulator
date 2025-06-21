@@ -144,8 +144,51 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ]
 
+# Payment Plan Configuration
+DEFAULT_INTEREST_RATE = config('DEFAULT_INTEREST_RATE', default=47.0, cast=float)
+
 CORS_ALLOW_CREDENTIALS = True
 
-# Celery Configuration (for bonus features)
+# Celery Configuration
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = True
+
+# Celery Beat Schedule for periodic tasks
+CELERY_BEAT_SCHEDULE = {
+    'daily-payment-reminders': {
+        'task': 'apps.payments.tasks.daily_payment_reminders',
+        'schedule': 60.0 * 60.0 * 24.0,  # Daily at midnight (24 hours)
+        'options': {'queue': 'reminders'}
+    },
+    'send-3-day-reminders': {
+        'task': 'apps.payments.tasks.send_bulk_payment_reminders',
+        'schedule': 60.0 * 60.0 * 24.0,  # Daily
+        'args': (3,),  # 3 days ahead
+        'options': {'queue': 'reminders'}
+    },
+    'mark-overdue-installments': {
+        'task': 'apps.payments.tasks.send_overdue_payment_reminders',
+        'schedule': 60.0 * 60.0 * 2.0,  # Every 2 hours
+        'options': {'queue': 'urgent'}
+    },
+}
+
+# Celery Task Routes
+CELERY_TASK_ROUTES = {
+    'apps.payments.tasks.send_payment_reminder': {'queue': 'reminders'},
+    'apps.payments.tasks.send_bulk_payment_reminders': {'queue': 'reminders'},
+    'apps.payments.tasks.send_overdue_payment_reminders': {'queue': 'urgent'},
+    'apps.payments.tasks.daily_payment_reminders': {'queue': 'reminders'},
+    'apps.payments.tasks.generate_merchant_payment_report': {'queue': 'reports'},
+}
+
+# Celery Task Settings
+CELERY_TASK_ALWAYS_EAGER = False  # Set to True for development/testing
+CELERY_TASK_EAGER_PROPAGATES = True
+CELERY_TASK_IGNORE_RESULT = False
+CELERY_TASK_STORE_EAGER_RESULT = True

@@ -25,11 +25,35 @@ class IsOwnerOrMerchant(permissions.BasePermission):
 class CanPayInstallment(permissions.BasePermission):
     """
     Permission to check if user can pay an installment
+    - Only users (not merchants) can pay installments
+    - User must be the owner of the payment plan
+    - Installment must be in 'pending' or 'late' status
     """
     
+    def has_permission(self, request, view):
+        # Basic authentication and user check
+        user = request.user
+        if not user or not user.is_authenticated:
+            return False
+        
+        if user.user_type != 'user':
+            return False
+            
+        return True
+    
     def has_object_permission(self, request, view, obj):
-        # Only the user (not merchant) can pay installments
-        return (
-            request.user.email == obj.payment_plan.user_email and
-            obj.status == 'pending'
-        )
+        user = request.user
+        
+        # User must be the owner of the payment plan
+        if user.email != obj.payment_plan.user_email:
+            return False
+        
+        # Installment must be payable (pending or late)
+        if obj.status not in ['pending', 'late']:
+            return False
+            
+        # Payment plan must be active
+        if obj.payment_plan.status != 'active':
+            return False
+            
+        return True
